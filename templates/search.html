@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Search Courses - Educational Platform{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Filter Courses</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('search') }}">
+                    <div class="mb-3">
+                        <label for="q" class="form-label">Search</label>
+                        <input type="text" class="form-control" id="q" name="q" value="{{ query }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="">All Categories</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat[0] }}" {% if cat[0] == selected_category %}selected{% endif %}>
+                                    {{ cat[0] }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="level" class="form-label">Level</label>
+                        <select class="form-select" id="level" name="level">
+                            <option value="">All Levels</option>
+                            <option value="Beginner" {% if selected_level == 'Beginner' %}selected{% endif %}>Beginner</option>
+                            <option value="Intermediate" {% if selected_level == 'Intermediate' %}selected{% endif %}>Intermediate</option>
+                            <option value="Advanced" {% if selected_level == 'Advanced' %}selected{% endif %}>Advanced</option>
+                        </select>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <h2 class="mb-4">Search Results</h2>
+        
+        {% if courses %}
+            <div class="row">
+                {% for course in courses %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ course.title }}</h5>
+                                <div class="mb-2">
+                                    <span class="badge bg-primary">{{ course.category }}</span>
+                                    <span class="badge bg-secondary">{{ course.level }}</span>
+                                </div>
+                                <p class="card-text">{{ course.description[:150] }}...</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">Instructor: {{ course.instructor.username }}</small>
+                                    <a href="{{ url_for('course_detail', course_id=course.id) }}" class="btn btn-primary btn-sm">View Course</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                No courses found matching your criteria.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 
